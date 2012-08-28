@@ -34,6 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="18sp"
+            android:gravity="center"
             android:text="\n\nTouch to edit" />
     </LinearLayout>
 
@@ -63,7 +64,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="18sp"
-            android:text="\n\nTouch here to Share your app usage on Facebook" />
+            android:gravity="center"
+            android:text="\n\nTouch here to Share your app usage with your friends on Facebook" />
     </LinearLayout>
 
 </LinearLayout>

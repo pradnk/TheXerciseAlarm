@@ -130,7 +130,6 @@ containing a value of this type.
         public static final int sound4=0x7f05001c;
         public static final int sound5=0x7f05001d;
         public static final int sound6=0x7f05001e;
-        public static final int sound7=0x7f05001f;
     }
     public static final class string {
         public static final int actionbar_activity_not_found=0x7f080002;

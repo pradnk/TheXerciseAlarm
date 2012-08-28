@@ -80,10 +80,8 @@ public class DisplayAlarm extends Activity {
 
 	private void shareOnFacebook() {
 		FacebookSocialNetwork facebook = new FacebookSocialNetwork(DisplayAlarm.this);
-		SharedPreferences alarmSp = getSharedPreferences("TheXerciseAlarm",
-				MODE_PRIVATE);
-		SimpleDateFormat displayFull = new SimpleDateFormat("dd/MM/yyyy @ hh:mm a");
+		SimpleDateFormat displayFull = new SimpleDateFormat("hh:mm a");
 		Date date = new Date();
-		facebook.postStatus("TheXerciseAlarm promptly woke me up on "+displayFull.format(date)+" and helped me Xercise!! Try it out for yourself at GOOGLE PLAY (To be launched)");
+		facebook.postStatus("TheXerciseAlarm promptly woke me up at "+displayFull.format(date)+" and helped me Xercise! Awesome! Coming soon on Google Play!");
 	}
 }

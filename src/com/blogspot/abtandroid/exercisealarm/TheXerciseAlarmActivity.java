@@ -67,7 +67,7 @@ public class TheXerciseAlarmActivity extends Activity {
 				FacebookSocialNetwork s = new FacebookSocialNetwork(TheXerciseAlarmActivity.this);
 				s.postStatus("Used TheXerciseAlarm "
 						+ sharedPreferences.getInt("days", 1)
-						+ " times already and loving it! Makes sure I wake up and also motivates me to Xercise!! Check it out at GOOGLE PLAY (to be launched)");
+						+ " times already and loving it! It makes sure I wake up and also motivates me to Xercise! Way cool! Coming soon on Google Play");
 			}
 		});
 	}

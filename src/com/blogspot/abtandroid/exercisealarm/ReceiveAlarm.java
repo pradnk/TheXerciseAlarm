@@ -26,24 +26,26 @@ public class ReceiveAlarm extends IntentService implements SensorEventListener {
 		super("RECEIVEALARM");
 	}
 
-    private long lastUpdate = -1;
+	private long lastUpdate = -1;
 	private float last_x = 0, last_y = 0, last_z = 0;
 	private final int TIME_INTERVAL = 10;
 	private int counter = 0;
-	private final int SHAKE_THRESHOLD = 1000;
-	private final int SHAKE_COUNT = 5;
+	private final int SHAKE_THRESHOLD = 3000;
+	private final int SHAKE_COUNT = 30;
 	private SensorManager sensorManager;
 	private AlarmManager manager;
-	
+
 	private PendingIntent operation;
 	private Vibrator vibrator;
 	private Sensor mAccelerometer;
 	private MediaPlayer player;
-	
+
 	private void addSensorsAndRegister() {
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-		mAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		sensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);
+		mAccelerometer = sensorManager
+				.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		sensorManager.registerListener(this, mAccelerometer,
+				SensorManager.SENSOR_DELAY_GAME);
 	}
 
 	private void deRegisterListener() {
@@ -52,10 +54,10 @@ public class ReceiveAlarm extends IntentService implements SensorEventListener {
 			sensorManager = null;
 		}
 	}
-	
+
 	@Override
 	public void onAccuracyChanged(Sensor arg0, int arg1) {
-		
+
 	}
 
 	@Override
@@ -63,17 +65,17 @@ public class ReceiveAlarm extends IntentService implements SensorEventListener {
 		int X = (int) sensorEvent.values[0];
 		int Y = (int) sensorEvent.values[1];
 		int Z = (int) sensorEvent.values[2];
-		
-		if(sensorEvent.sensor == mAccelerometer) {
+
+		if (sensorEvent.sensor == mAccelerometer) {
 			analyzeValuesAcc(X, Y, Z);
 		}
 	}
-	
+
 	private boolean analyzeValuesAcc(int x, int y, int z) {
 		updateCordinates(x, y, z);
 		return false;
 	}
-	
+
 	private void updateCordinates(float x, float y, float z) {
 		try {
 			long curTime = System.currentTimeMillis();
@@ -81,10 +83,11 @@ public class ReceiveAlarm extends IntentService implements SensorEventListener {
 			if (diffTime >= TIME_INTERVAL) {
 				lastUpdate = curTime;
 
-				float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
+				float speed = Math.abs(x + y + z - last_x - last_y - last_z)
+						/ diffTime * 10000;
 				if (speed >= SHAKE_THRESHOLD) {
 					counter++;
-					if(counter == SHAKE_COUNT) {
+					if (counter == SHAKE_COUNT) {
 						deRegisterListener();
 						stopAlarm();
 						return;
@@ -106,32 +109,30 @@ public class ReceiveAlarm extends IntentService implements SensorEventListener {
 		try {
 			player.stop();
 			player.release();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		notificationManager.cancel(101);
 
-		SharedPreferences sharedPreferences = getSharedPreferences("TheXerciseAlarm", MODE_PRIVATE);
+		SharedPreferences sharedPreferences = getSharedPreferences(
+				"TheXerciseAlarm", MODE_PRIVATE);
 		long alarm = sharedPreferences.getLong("alarm", new Date().getTime());
 		SetAlarm.setAlarm(this, alarm);
 		int daysElapsed = sharedPreferences.getInt("days", 0) + 1;
 		sharedPreferences.edit().putInt("days", daysElapsed).commit();
-		
-		//TODO: FACEBOOK
-		
-		manager.cancel(operation);		
+		manager.cancel(operation);
 	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
-	
+
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		if(intent != null) {
-			operation = (PendingIntent)intent.getParcelableExtra("operation");
+		if (intent != null) {
+			operation = (PendingIntent) intent.getParcelableExtra("operation");
 			try {
 				startAlarm();
 			} catch (Exception e) {
@@ -142,26 +143,30 @@ public class ReceiveAlarm extends IntentService implements SensorEventListener {
 	}
 
 	private void startAlarm() throws Exception {
-		startActivity(new Intent(this, DisplayAlarm.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+		startActivity(new Intent(this, DisplayAlarm.class)
+				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 		Constants.ALARM_ON = true;
-		vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 		vibrator.vibrate(100000);
-		int randomIndex = (int)(Math.random() * (Constants.sounds.length - 1));
+		int randomIndex = (int) (Math.random() * (Constants.sounds.length - 1));
 		AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-//		audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
-		audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 1, 0);
-		player = MediaPlayer.create(this, Constants.sounds[randomIndex]);
-		player.setScreenOnWhilePlaying(true);
-		player.setLooping(true);
-		player.setOnErrorListener(new OnErrorListener() {
-			
-			@Override
-			public boolean onError(MediaPlayer mp, int what, int extra) {
-				Toast.makeText(ReceiveAlarm.this, "MediaPlayer Error. Only vibration!", Toast.LENGTH_LONG).show();
-				return true;
-			}
-		});
+		audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
+				audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+//		 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 1, 0);
 		try {
+			player = MediaPlayer.create(this, Constants.sounds[randomIndex]);
+			player.setScreenOnWhilePlaying(true);
+			player.setLooping(true);
+			player.setOnErrorListener(new OnErrorListener() {
+
+				@Override
+				public boolean onError(MediaPlayer mp, int what, int extra) {
+					Toast.makeText(ReceiveAlarm.this,
+							"MediaPlayer Error. Only vibration!",
+							Toast.LENGTH_LONG).show();
+					return true;
+				}
+			});
 			player.start();
 		} catch (Exception e) {
 			e.printStackTrace();

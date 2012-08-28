@@ -4,8 +4,7 @@ public class Constants {
 	public static boolean ALARM_ON = false;
 	
 	public static final int[] sounds = new int[] { R.raw.sound1, R.raw.sound2,
-			R.raw.sound3, R.raw.sound4, R.raw.sound5, R.raw.sound6,
-			R.raw.sound7 };
+			R.raw.sound3, R.raw.sound4, R.raw.sound5, R.raw.sound6 };
 
 	public static final int[] inspiration = new int[] { R.raw.inspire1,
 			R.raw.inspire2, R.raw.inspire3, R.raw.inspire4, R.raw.inspire5,
